@@ -3,6 +3,7 @@ setwd('/Users/ivanliu/Downloads/kaggle/Coupon-Purchase-Prediction')
 system("ls ../data")
 system("echo \n\n")
 system("head ../data/*.csv")
+#system("mkdir ../data/en/")
 
 #################################################################################
 # This script translates Japanese text to English in the data files
@@ -10,7 +11,7 @@ system("head ../data/*.csv")
 #################################################################################
 
 # Create master translation table from Japanese to English
-coupon_list_train = read.csv("../input/coupon_list_train.csv", as.is=T) # Source file the English list is keyed by
+coupon_list_train = read.csv("../data/coupon_list_train.csv", as.is=T) # Source file the English list is keyed by
 trans = data.frame(
     jp=unique(c(coupon_list_train$GENRE_NAME, coupon_list_train$CAPSULE_TEXT,
                 coupon_list_train$large_area_name, coupon_list_train$ken_name,
@@ -21,19 +22,19 @@ trans = data.frame(
 # Append data with translated columns...
 
 # COUPON_LIST_TRAIN.CSV
-coupon_list_train = read.csv("../input/coupon_list_train.csv", as.is=T) # Read data file to translate
+coupon_list_train = read.csv("../data/coupon_list_train.csv", as.is=T) # Read data file to translate
 names(trans)=c("jp","en_capsule") # Rename column
 coupon_list_train=merge(coupon_list_train,trans,by.x="CAPSULE_TEXT",by.y="jp",all.x=T) # Join translation onto original data
 names(trans)=c("jp","en_genre"); coupon_list_train=merge(coupon_list_train,trans,by.x="GENRE_NAME",by.y="jp",all.x=T)
 names(trans)=c("jp","en_small_area"); coupon_list_train=merge(coupon_list_train,trans,by.x="small_area_name",by.y="jp",all.x=T)
 names(trans)=c("jp","en_ken"); coupon_list_train=merge(coupon_list_train,trans,by.x="ken_name",by.y="jp",all.x=T)
 names(trans)=c("jp","en_large_area"); coupon_list_train=merge(coupon_list_train,trans,by.x="large_area_name",by.y="jp",all.x=T)
-write.csv(coupon_list_train, "coupon_list_train_en.csv", row.names = F)
+write.csv(coupon_list_train, "../data/en/coupon_list_train_en.csv", row.names = F)
 
 # COUPON_LIST_TRAIN.CSV
-coupon_area_train = read.csv("../input/coupon_area_train.csv", as.is=T) 
+coupon_area_train = read.csv("../data/coupon_area_train.csv", as.is=T) 
 names(trans)=c("jp","en_small_area"); coupon_area_train=merge(coupon_area_train,trans,by.x="SMALL_AREA_NAME",by.y="jp",all.x=T)
 names(trans)=c("jp","en_pref"); coupon_area_train=merge(coupon_area_train,trans,by.x="PREF_NAME",by.y="jp",all.x=T)
-write.csv(coupon_area_train, "coupon_area_train_en.csv", row.names = F)
+write.csv(coupon_area_train, "../data/en/coupon_area_train_en.csv", row.names = F)
 
 # You get the idea... can use this to translate any of the other files, too
