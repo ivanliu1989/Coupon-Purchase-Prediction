@@ -1,8 +1,8 @@
 setwd('/Users/ivanliu/Downloads/kaggle/Coupon-Purchase-Prediction')
 
-system("ls ../input")
+system("ls ../data")
 system("echo \n\n")
-system("head ../input/*")
+system("head ../data/*.csv")
 
 #################################################################################
 # This script translates Japanese text to English in the data files
