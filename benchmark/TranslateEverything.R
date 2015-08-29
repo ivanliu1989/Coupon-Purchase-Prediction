@@ -1,4 +1,5 @@
 setwd('/Users/ivanliu/Downloads/kaggle/Coupon-Purchase-Prediction')
+rm(list=ls());gc()
 
 system("ls ../data")
 system("echo \n\n")

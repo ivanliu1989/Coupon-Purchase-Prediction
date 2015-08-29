@@ -1,24 +1,25 @@
 setwd('/Users/ivanliu/Downloads/kaggle/Coupon-Purchase-Prediction')
+rm(list=ls());gc()
 #read in all the input data
-cpdtr <- read.csv("../input/coupon_detail_train.csv")
-cpltr <- read.csv("../input/coupon_list_train.csv")
-cplte <- read.csv("../input/coupon_list_test.csv")
-ulist <- read.csv("../input/user_list.csv")
+cpdtr <- read.csv("../data/en/coupon_detail_train_en.csv")
+cpltr <- read.csv("../data/en/coupon_list_train_en.csv")
+cplte <- read.csv("../data/en/coupon_list_test_en.csv")
+ulist <- read.csv("../data/en/user_list_en.csv")
 
 #making of the train set
 train <- merge(cpdtr,cpltr)
 train <- train[,c("COUPON_ID_hash","USER_ID_hash",
-                  "GENRE_NAME","DISCOUNT_PRICE",
+                  "en_genre","DISCOUNT_PRICE",
                   "USABLE_DATE_MON","USABLE_DATE_TUE","USABLE_DATE_WED","USABLE_DATE_THU",
                   "USABLE_DATE_FRI","USABLE_DATE_SAT","USABLE_DATE_SUN","USABLE_DATE_HOLIDAY",
-                  "USABLE_DATE_BEFORE_HOLIDAY","ken_name","small_area_name")]
+                  "USABLE_DATE_BEFORE_HOLIDAY","en_ken","en_small_area")]
 #combine the test set with the train
 cplte$USER_ID_hash <- "dummyuser"
 cpchar <- cplte[,c("COUPON_ID_hash","USER_ID_hash",
-                   "GENRE_NAME","DISCOUNT_PRICE",
+                   "en_genre","DISCOUNT_PRICE",
                    "USABLE_DATE_MON","USABLE_DATE_TUE","USABLE_DATE_WED","USABLE_DATE_THU",
                    "USABLE_DATE_FRI","USABLE_DATE_SAT","USABLE_DATE_SUN","USABLE_DATE_HOLIDAY",
-                   "USABLE_DATE_BEFORE_HOLIDAY","ken_name","small_area_name")]
+                   "USABLE_DATE_BEFORE_HOLIDAY","en_ken","en_small_area")]
 
 train <- rbind(train,cpchar)
 #NA imputation

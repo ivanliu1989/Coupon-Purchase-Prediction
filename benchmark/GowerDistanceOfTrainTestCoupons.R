@@ -1,4 +1,6 @@
 setwd('/Users/ivanliu/Downloads/kaggle/Coupon-Purchase-Prediction')
+rm(list=ls());gc()
+
 k = 3
 
 coupon_list_train <- read.csv("../input/coupon_list_train.csv")

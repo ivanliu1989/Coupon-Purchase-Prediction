@@ -1,5 +1,6 @@
 ### Kaggle Scripts: Ponpare Coupon Purchase Prediction ###
 setwd('/Users/ivanliu/Downloads/kaggle/Coupon-Purchase-Prediction')
+rm(list=ls());gc()
 
 #read in all the input data
 cpdtr <- read.csv("../input/coupon_detail_train.csv")
