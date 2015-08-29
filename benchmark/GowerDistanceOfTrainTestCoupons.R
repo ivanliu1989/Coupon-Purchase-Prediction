@@ -3,8 +3,8 @@ rm(list=ls());gc()
 
 k = 3
 
-coupon_list_train <- read.csv("../input/coupon_list_train.csv")
-coupon_list_test <- read.csv("../input/coupon_list_test.csv")
+coupon_list_train <- read.csv("../data/en/coupon_list_train_en.csv")
+coupon_list_test <- read.csv("../data/en/coupon_list_test_en.csv")
 
 ### Couple new features
 

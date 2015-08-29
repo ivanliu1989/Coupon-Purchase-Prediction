@@ -9,3 +9,6 @@ Using past purchase and browsing behavior, this competition asks you to predict 
     - latent semantic models (singular value decomposition, probabilistic latent semantic analysis, multiple multiplicative factor, latent Dirichlet allocation, Markov decision process)
 
 #### 3.Hybrid recommender system
+
+### Feature Engineering
+1. Distince (Customer - Coupon)

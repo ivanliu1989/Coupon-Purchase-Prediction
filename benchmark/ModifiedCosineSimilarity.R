@@ -6,6 +6,8 @@ cpdtr <- read.csv("../data/en/coupon_detail_train_en.csv")
 cpltr <- read.csv("../data/en/coupon_list_train_en.csv")
 cplte <- read.csv("../data/en/coupon_list_test_en.csv")
 ulist <- read.csv("../data/en/user_list_en.csv")
+# coupon visit
+# coupon area
 
 #making of the train set
 train <- merge(cpdtr,cpltr)
