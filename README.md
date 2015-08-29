@@ -12,3 +12,6 @@ Using past purchase and browsing behavior, this competition asks you to predict 
 
 ### Feature Engineering
 1. Distince (Customer - Coupon)
+2. Gender
+3. Valid date range
+4. Weights (allcoation)

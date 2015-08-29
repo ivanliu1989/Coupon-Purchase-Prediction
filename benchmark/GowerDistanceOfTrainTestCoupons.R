@@ -84,8 +84,8 @@ rm(coupon_list_test, recom)
 
 ## User-list 
 
-user_list <- read.csv("../input/user_list.csv")
-coupon_detail_train <- read.csv("../input/coupon_detail_train.csv")
+user_list <- read.csv("../data/en/user_list_en.csv")
+coupon_detail_train <- read.csv("../data/en/coupon_detail_train_en.csv")
 
 join <- merge(coupon_detail_train, coupon_list_train)
 join <- subset(join, select = c(USER_ID_hash, recom))
