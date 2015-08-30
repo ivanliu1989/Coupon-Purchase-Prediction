@@ -14,34 +14,45 @@ ulist <- read.csv("../data/en/user_list_en.csv") # Residential Prefecture (PREF_
 
 # purchase to valid period
 # purchase location / coupon location
+
 ### 2.Merge dataset
 train <- merge(c_detail_train, c_list_train); dim(train); dim(c_detail_train); dim(c_list_train) #, all.y = T
 train <- merge(train, ulist); dim(train); dim(ulist)
 
-test <- do.call(rbind, lapply(1:nrow(c_list_test),FUN=function(i){
+test1 <- do.call(rbind, lapply(1:100,FUN=function(i){
     ulist$COUPON_ID_hash <- c_list_test[i,'COUPON_ID_hash']
     test_df <- merge(ulist, c_list_test[i,])
     print(i)
     return(test_df)
 }))
+test2 <- do.call(rbind, lapply(101:200,FUN=function(i){
+    ulist$COUPON_ID_hash <- c_list_test[i,'COUPON_ID_hash']
+    test_df <- merge(ulist, c_list_test[i,])
+    print(i)
+    return(test_df)
+}))
+test3 <- do.call(rbind, lapply(201:nrow(c_list_test),FUN=function(i){
+    ulist$COUPON_ID_hash <- c_list_test[i,'COUPON_ID_hash']
+    test_df <- merge(ulist, c_list_test[i,])
+    print(i)
+    return(test_df)
+}))
+test <- rbind(test1,test2,test3)
 
-for (i in 1:nrow(c_list_test)){
-    if(i==1){
-        ulist$COUPON_ID_hash <- c_list_test[i,'COUPON_ID_hash']
-        test <- merge(ulist, c_list_test[i,])  
-    }else{
-        ulist$COUPON_ID_hash <- c_list_test[i,'COUPON_ID_hash']
-        test_df <- merge(ulist, c_list_test[i,])  
-        test <- rbind(test, test_df)
-        print(i)
-    }
-}
+### 3.Combine All Raw datasets
+dim(train);dim(test)
+train <- train[,names(test)]
+train$flag <- 1; test$flag <- 1
+all <- rbind(train,test);dim(all)
+save(all, file='../data/model_based_data.RData')
 
-### 3.Geographic features
+### 4.Geographic features
+load('../data/model_based_data.RData')
 
-### 4.Dropout/New customers
+
+### 5.Dropout/New customers
 dropout <- ulist[which(as.POSIXlt(ulist$WITHDRAW_DATE, format = "%Y-%m-%d") <= as.POSIXlt("2012-06-30", format = "%Y-%m-%d")),]
 newregister <- ulist[which(as.POSIXlt(ulist$REG_DATE, format = "%Y-%m-%d") > as.POSIXlt("2012-06-24", format = "%Y-%m-%d")),]
 
-### 5.Save cleaned dataset
+### 6.Save cleaned dataset
 save(train, test, dropout, newregister, file='model_based_data.RData')
