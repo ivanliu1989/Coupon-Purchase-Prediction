@@ -100,7 +100,7 @@ all <- all[,-which(names(all) %in% c('en_small_area', 'DISPFROM', 'DISPEND', 'VA
 # en_pref, distance_km, USABLE_DATE_MON, - USABLE_DATE_BEFORE_HOLIDAY, VALIDPERIOD
 all[,12:20][is.na(all[,12:20])] <- 1
 all$distance_km[is.na(all$distance_km)] <- mean(all$distance_km, na.rm=T)
-all$VALIDPERIOD[is.na(all$VALIDPERIOD)] <- mean(all$VALIDPERIOD, na.rm=T)
+all$VALIDPERIOD[is.na(all$VALIDPERIOD)] <- mean(all$VALIDPERIOD, na.rm=T) # <<=====================IMPROVEMENT!!!! STRATIFIED IMPUTATION
 for (i in 12:20){
     all[,i] <- as.factor(all[,i])
     print(i)
@@ -113,6 +113,7 @@ for(i in 1:(ncol(all)-2)){
         print(i)
     }
 }
+save(all, file='../data/model_based_data_impute_scale.RData')
 
 ### 8.One-hot Encoding
 
