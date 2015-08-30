@@ -14,3 +14,6 @@ ulist <- read.csv("../data/en/user_list_en.csv")
 
 # purchase to valid period
 # purchase location / coupon location
+# Merge dataset
+df <- merge(c_detail_train, c_list_train); dim(df); dim(c_detail_train); dim(c_list_train)
+df <- merge(df, ulist); dim(df)
