@@ -82,18 +82,40 @@ distance <- as.data.frame(distance)
 names(distance) <- c('en_pref','en_ken', 'distance_km')
 distance$distance_km <- as.numeric(levels(distance$distance_km))[distance$distance_km]
 all_loc <- merge(all, distance, all.x=T, by=c('en_pref','en_ken'))
-
-save(all_loc, file='../data/model_based_data.RData')
+all <- all_loc[,c(3:4,7:8,9:11,27:28,1:2,34,18:26,12:17,29:32,6,5,33)]
+save(all, file='../data/model_based_data.RData')
 
 ### 5.Dropout/New customers
 dropout <- ulist[which(as.POSIXlt(ulist$WITHDRAW_DATE, format = "%Y-%m-%d") <= as.POSIXlt("2012-06-30", format = "%Y-%m-%d")),]
 newregister <- ulist[which(as.POSIXlt(ulist$REG_DATE, format = "%Y-%m-%d") > as.POSIXlt("2012-06-24", format = "%Y-%m-%d")),]
 
 ### 6.Sort/Generate Features
+rm(list=ls());gc()
+load('../data/model_based_data.RData')
+# remove: en_small_area, DISPFROM, DISPEND, VALIDFROM, VALIDEND, REG_DATE, WITHDRAW_DATE, I_Date
+# new feature: member_yr, holiday?, I_Date-DISPPERIOD
+all <- all[,-which(names(all) %in% c('en_small_area', 'DISPFROM', 'DISPEND', 'VALIDFROM', 'VALIDEND', 'REG_DATE', 'WITHDRAW_DATE', 'I_Date'))]
+
+### 7.Imputation
+# en_pref, distance_km, USABLE_DATE_MON, - USABLE_DATE_BEFORE_HOLIDAY, VALIDPERIOD
+all[,12:20][is.na(all[,12:20])] <- 1
+all$distance_km[is.na(all$distance_km)] <- mean(all$distance_km, na.rm=T)
+all$VALIDPERIOD[is.na(all$VALIDPERIOD)] <- mean(all$VALIDPERIOD, na.rm=T)
+for (i in 12:20){
+    all[,i] <- as.factor(all[,i])
+    print(i)
+}
+
+for(i in 1:ncol(all)){
+    if(is.numeric(all[,i])){
+        scaled = as.numeric(scale(all[,i]))
+        all[,i] = scaled[1:nrow(all)]
+        print(i)
+    }
+}
+
+### 8.One-hot Encoding
 
 
-### 7.One-hot Encoding
-
-
-### 8.Output cleaned dataset (train, validation, test)
+### 9.Output cleaned dataset (train, validation, test)
 save(train, test, dropout, newregister, file='model_based_data.RData')
