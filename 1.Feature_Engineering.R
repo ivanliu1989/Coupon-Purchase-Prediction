@@ -18,11 +18,24 @@ ulist <- read.csv("../data/en/user_list_en.csv") # Residential Prefecture (PREF_
 train <- merge(c_detail_train, c_list_train); dim(train); dim(c_detail_train); dim(c_list_train) #, all.y = T
 train <- merge(train, ulist); dim(train); dim(ulist)
 
-test <- do.call(rbind, lapply(1:nrow(ulist),FUN=function(i){
-    c_list_test$USER_ID_hash <- ulist[i,'USER_ID_hash']
-    test_df <- merge(c_list_test, ulist[i,])
+test <- do.call(rbind, lapply(1:nrow(c_list_test),FUN=function(i){
+    ulist$COUPON_ID_hash <- c_list_test[i,'COUPON_ID_hash']
+    test_df <- merge(ulist, c_list_test[i,])
+    print(i)
     return(test_df)
 }))
+
+for (i in 1:nrow(c_list_test)){
+    if(i==1){
+        ulist$COUPON_ID_hash <- c_list_test[i,'COUPON_ID_hash']
+        test <- merge(ulist, c_list_test[i,])  
+    }else{
+        ulist$COUPON_ID_hash <- c_list_test[i,'COUPON_ID_hash']
+        test_df <- merge(ulist, c_list_test[i,])  
+        test <- rbind(test, test_df)
+        print(i)
+    }
+}
 
 ### 3.Geographic features
 
