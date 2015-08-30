@@ -106,7 +106,7 @@ for (i in 12:20){
     print(i)
 }
 
-for(i in 1:ncol(all)){
+for(i in 1:(ncol(all)-2)){
     if(is.numeric(all[,i])){
         scaled = as.numeric(scale(all[,i]))
         all[,i] = scaled[1:nrow(all)]
