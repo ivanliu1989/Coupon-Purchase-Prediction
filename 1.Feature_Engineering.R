@@ -17,8 +17,8 @@ log <- read.csv("../data/raw/coupon_visit_train.csv")
 # purchase location / coupon location
 
 ### 2.Merge dataset
-train <- merge(c_detail_train, c_list_train); dim(train); dim(c_detail_train); dim(c_list_train) #, all.y = T
-train <- merge(train, ulist); dim(train); dim(ulist)
+# train <- merge(c_detail_train, c_list_train); dim(train); dim(c_detail_train); dim(c_list_train) #, all.y = T
+# train <- merge(train, ulist); dim(train); dim(ulist)
 
 # train + log
 log_df <- log[,c(1,2,5,6,8)]
@@ -26,8 +26,16 @@ log_df$I_DATE <- as.POSIXlt(log_df$I_DATE, format = "%Y-%m-%d")
 log_train <- aggregate(PURCHASE_FLG~VIEW_COUPON_ID_hash + USER_ID_hash + PURCHASEID_hash, data=log_df, FUN=max)
 log_train_dt <- aggregate(as.numeric(as.Date(I_DATE), format = "%Y-%m-%d")~VIEW_COUPON_ID_hash + USER_ID_hash + PURCHASEID_hash, data=log_df, FUN=max)
 library("zoo")
-log_train_dt$`as.numeric(I_DATE)` <- as.Date(log_train_dt$`as.numeric(I_DATE)`, format = "%Y-%m-%d")
+log_train_dt[,4] <- as.Date(log_train_dt[,4], format = "%Y-%m-%d");
+log_train <- merge(log_train, log_train_dt)
+names(log_train) <- c('COUPON_ID_hash', 'USER_ID_hash', 'PURCHASEID_hash', 'PURCHASE_FLG', 'I_Date')
 
+# merge train
+train <- merge(log_train, c_list_train); dim(train); dim(log_train); dim(c_list_train) #, all.y = T
+train <- merge(train, ulist); dim(train); dim(ulist)
+
+
+# test
 test1 <- do.call(rbind, lapply(1:100,FUN=function(i){
     ulist$COUPON_ID_hash <- c_list_test[i,'COUPON_ID_hash']
     test_df <- merge(ulist, c_list_test[i,])
@@ -49,13 +57,17 @@ test3 <- do.call(rbind, lapply(201:nrow(c_list_test),FUN=function(i){
 test <- rbind(test1,test2,test3)
 
 ### 3.Combine All Raw datasets
+train$flag <- 0; test$flag <- 1
+train <- train[,-which(names(train) %in% c('PURCHASEID_hash'))]
+test$I_Date <- as.POSIXlt('2012-06-24', format = "%Y-%m-%d")
+test$PURCHASE_FLG <- 0
 dim(train);dim(test)
-train <- train[,names(test)]
-train$flag <- 1; test$flag <- 1
+
 all <- rbind(train,test);dim(all)
 save(all, file='../data/model_based_data.RData')
 
 ### 4.Geographic features
+rm(list=ls());gc()
 load('../data/model_based_data.RData')
 
 
