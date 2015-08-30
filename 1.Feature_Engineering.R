@@ -11,6 +11,7 @@ c_list_train <- read.csv("../data/en/coupon_list_train_en.csv") # shop location 
 c_list_test <- read.csv("../data/en/coupon_list_test_en.csv") # shop location (SMALL_AREA_NAME)
 plocation <- read.csv("../data/en/prefecture_locations_en.csv")
 ulist <- read.csv("../data/en/user_list_en.csv") # Residential Prefecture (PREF_NAME)
+log <- read.csv("../data/raw/coupon_visit_train.csv")
 
 # purchase to valid period
 # purchase location / coupon location
@@ -18,6 +19,14 @@ ulist <- read.csv("../data/en/user_list_en.csv") # Residential Prefecture (PREF_
 ### 2.Merge dataset
 train <- merge(c_detail_train, c_list_train); dim(train); dim(c_detail_train); dim(c_list_train) #, all.y = T
 train <- merge(train, ulist); dim(train); dim(ulist)
+
+# train + log
+log_df <- log[,c(1,2,5,6,8)]
+log_df$I_DATE <- as.POSIXlt(log_df$I_DATE, format = "%Y-%m-%d")
+log_train <- aggregate(PURCHASE_FLG~VIEW_COUPON_ID_hash + USER_ID_hash + PURCHASEID_hash, data=log_df, FUN=max)
+log_train_dt <- aggregate(as.numeric(as.Date(I_DATE), format = "%Y-%m-%d")~VIEW_COUPON_ID_hash + USER_ID_hash + PURCHASEID_hash, data=log_df, FUN=max)
+library("zoo")
+log_train_dt$`as.numeric(I_DATE)` <- as.Date(log_train_dt$`as.numeric(I_DATE)`, format = "%Y-%m-%d")
 
 test1 <- do.call(rbind, lapply(1:100,FUN=function(i){
     ulist$COUPON_ID_hash <- c_list_test[i,'COUPON_ID_hash']
