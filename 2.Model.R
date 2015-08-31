@@ -48,7 +48,7 @@ fit <- train(PURCHASE_FLG ~ .,
              # preProc = c("pca"), #"center", "scale"
              tuneLength = 6, #8
              verbose = TRUE,
-             tuneGrid = Grid,
+             # tuneGrid = Grid,
              metric = "ROC")
 
 # feature importance
