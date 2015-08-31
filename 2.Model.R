@@ -19,13 +19,13 @@ levels(training$PURCHASE_FLG) <- c('No','Yes')
 
 # model settings
 fitControl <- trainControl(method = "adaptive_cv",
-                           number = 10,
-                           repeats = 5,
+                           number = 5, #10
+                           repeats = 1, #5
                            classProbs = TRUE,
                            summaryFunction = twoClassSummary,
                            allowParallel = TRUE,
                            # selectionFunction = 'best',
-                           adaptive = list(min = 10,
+                           adaptive = list(min = 2, #10
                                            alpha = 0.05,
                                            method = "BT",
                                            complete = TRUE))
@@ -40,8 +40,8 @@ fit <- train(PURCHASE_FLG ~ .,
              data = training[,-c(1,2)],
              method = "gbm",
              trControl = fitControl,
-             # preProc = c("center", "scale"),
-             tuneLength = 8,
+              preProc = c("pca"), #"center", "scale"
+             tuneLength = 2, #8
              verbose = TRUE,
              metric = "ROC")
 
