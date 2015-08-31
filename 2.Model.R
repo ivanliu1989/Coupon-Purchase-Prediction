@@ -21,31 +21,34 @@ training$PURCHASE_FLG <- as.factor(training$PURCHASE_FLG)
 levels(training$PURCHASE_FLG) <- c('No','Yes')
 
 # model settings
-fitControl <- trainControl(method = "adaptive_cv", # adaptive_cv
-                           number = 5, #10
-                           repeats = 1, #5
+fitControl <- trainControl(method = "none", # adaptive_cv
+#                            number = 5, #10
+#                            repeats = 1, #5
                            classProbs = TRUE,
-                           summaryFunction = twoClassSummary,
-                           allowParallel = TRUE,
-                           # selectionFunction = 'best',
-                           adaptive = list(min = 2, #10
-                                           alpha = 0.05,
-                                           method = "BT",
-                                           complete = TRUE))
+                           summaryFunction = twoClassSummary#,
+#                            allowParallel = TRUE,
+#                            # selectionFunction = 'best',
+#                            adaptive = list(min = 2, #10
+#                                            alpha = 0.05,
+#                                            method = "BT",
+#                                            complete = TRUE)
+                           )
 # grid
 # Grid <-  expand.grid(interaction.depth = c(1, 5, 9),
 #                      n.trees = (1:30)*50,
 #                      shrinkage = 0.1,
 #                      n.minobsinnode = 20)
+Grid <- expand.grid(mtry = 17)
 # train
 set.seed(8)
 fit <- train(PURCHASE_FLG ~ .,
              data = training[,-c(1,2)],
-             method = "gbm",
+             method = "rf",
              trControl = fitControl,
-             preProc = c("pca"), #"center", "scale"
-             tuneLength = 2, #8
+             # preProc = c("pca"), #"center", "scale"
+             # tuneLength = 2, #8
              verbose = TRUE,
+             tuneGrid = Grid,
              metric = "ROC")
 
 # feature importance
@@ -57,3 +60,7 @@ ggplot(fit)
 
 # predict
 pred <- predict(fit, newdata = validation, type = "prob")
+
+# save model
+gbmFit <- fit
+save(gbmFit, file='trained_models.RData')
