@@ -116,6 +116,11 @@ for(i in 1:(ncol(all)-2)){
 save(all, file='../data/model_based_data_impute_scale.RData')
 
 ### 8.One-hot Encoding
+load('../data/model_based_data_impute_scale.RData')
+head(all)
+all_df <- cbind(all[,c(1,2)],
+             model.matrix(~ -1 + .,all[,-c(1,2,5,6,7,11,21,22,24,25,26)]),
+             all[,c(5,6,7,11,21,22,24)], all[,c(25,26)])
 
 
 ### 9.Output cleaned dataset (train, validation, test)
