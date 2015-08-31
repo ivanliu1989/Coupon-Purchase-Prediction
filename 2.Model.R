@@ -10,15 +10,18 @@ validation <- train[-inTraining,]
 training <- train[inTraining,]
 dim(validation);dim(training)
 
+object.size(training)/1024/1024/1024
+rm(test,train, inTraining, dropout, newregister)
+
 ### modeling
-library(doMC)
-registerDoMC(cores = 4)
+# library(doMC)
+# registerDoMC(cores = 2)
 
 training$PURCHASE_FLG <- as.factor(training$PURCHASE_FLG)
 levels(training$PURCHASE_FLG) <- c('No','Yes')
 
 # model settings
-fitControl <- trainControl(method = "adaptive_cv",
+fitControl <- trainControl(method = "adaptive_cv", # adaptive_cv
                            number = 5, #10
                            repeats = 1, #5
                            classProbs = TRUE,
@@ -30,17 +33,17 @@ fitControl <- trainControl(method = "adaptive_cv",
                                            method = "BT",
                                            complete = TRUE))
 # grid
-Grid <-  expand.grid(interaction.depth = c(1, 5, 9),
-                     n.trees = (1:30)*50,
-                     shrinkage = 0.1,
-                     n.minobsinnode = 20)
+# Grid <-  expand.grid(interaction.depth = c(1, 5, 9),
+#                      n.trees = (1:30)*50,
+#                      shrinkage = 0.1,
+#                      n.minobsinnode = 20)
 # train
 set.seed(8)
 fit <- train(PURCHASE_FLG ~ .,
              data = training[,-c(1,2)],
              method = "gbm",
              trControl = fitControl,
-              preProc = c("pca"), #"center", "scale"
+             preProc = c("pca"), #"center", "scale"
              tuneLength = 2, #8
              verbose = TRUE,
              metric = "ROC")
@@ -51,3 +54,6 @@ featImp
 
 # model performance
 ggplot(fit)
+
+# predict
+pred <- predict(fit, newdata = validation, type = "prob")
