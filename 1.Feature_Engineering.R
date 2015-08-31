@@ -118,10 +118,16 @@ save(all, file='../data/model_based_data_impute_scale.RData')
 ### 8.One-hot Encoding
 load('../data/model_based_data_impute_scale.RData')
 head(all)
+# options(na.action="na.fail")
+all$en_pref <- as.character(all$en_pref)
+all$en_pref[is.na(all$en_pref)] <- 'central'
+all$en_pref <- as.factor(all$en_pref)
 all_df <- cbind(all[,c(1,2)],
              model.matrix(~ -1 + .,all[,-c(1,2,5,6,7,11,21,22,24,25,26)]),
              all[,c(5,6,7,11,21,22,24)], all[,c(25,26)])
 
-
+train <- all_df[which(all_df$flag == 0), -167]
+test <- all_df[which(all_df$flag == 1), -167]
+dim(train); dim(test)
 ### 9.Output cleaned dataset (train, validation, test)
-save(train, test, dropout, newregister, file='model_based_data.RData')
+save(train, test, dropout, newregister, file='../data/2_model_based_train_test_drop_new.RData')
