@@ -21,33 +21,36 @@ training$PURCHASE_FLG <- as.factor(training$PURCHASE_FLG)
 levels(training$PURCHASE_FLG) <- c('No','Yes')
 
 # model settings
-fitControl <- trainControl(method = "cv", # adaptive_cv
+fitControl <- trainControl(method = "none", # adaptive_cv
                            number = 10, #10
-#                            repeats = 1, #5
+                           #                            repeats = 1, #5
                            classProbs = TRUE,
                            summaryFunction = twoClassSummary,
                            # allowParallel = TRUE,
                            selectionFunction = 'best'#,
-#                            adaptive = list(min = 4, #10
-#                                            alpha = 0.05,
-#                                            method = "BT",
-#                                            complete = TRUE)
-                           )
+                           #                            adaptive = list(min = 4, #10
+                           #                                            alpha = 0.05,
+                           #                                            method = "BT",
+                           #                                            complete = TRUE)
+)
 # grid
-Grid <-  expand.grid(interaction.depth = c(5,8),
-                     n.trees = c(150,300,600),
-                     shrinkage = c(0.01,0.1)#,
-                     #n.minobsinnode = 20
-                     )
-# Grid <- expand.grid(mtry = 17)
+# Grid <-  expand.grid(interaction.depth = 6,
+#                      n.trees = 300,
+#                      shrinkage = 0.01#,
+#                      #n.minobsinnode = 20
+# )
+# Grid <- expand.grid(mtry = 17) #rf
+Grid <- expand.grid(size = 9, decay = 0.5) #nnet
+# Grid <- expand.grid(fL = 3, usekernel = 0.9) #nb
+# Grid <- expand.grid(nlter) #LogitBoost
 # train
 set.seed(8)
 fit <- train(PURCHASE_FLG ~ .,
              data = training[,-c(1,2)],
-             method = "gbm",
+             method = "nnet", 
              trControl = fitControl,
              # preProc = c("pca"), #"center", "scale"
-             tuneLength = 6, #8
+             # tuneLength = 6, #8
              verbose = TRUE,
              tuneGrid = Grid,
              metric = "ROC")
@@ -64,4 +67,4 @@ pred <- predict(fit, newdata = validation, type = "prob")
 
 # save model
 gbmFit <- fit
-save(gbmFit, file='trained_models.RData')
+save(gbmFit, file='../trained_models.RData')
