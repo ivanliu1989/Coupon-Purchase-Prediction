@@ -40,14 +40,14 @@ fitControl <- trainControl(method = "none", # adaptive_cv
 #                      #n.minobsinnode = 20
 # )
 # Grid <- expand.grid(mtry = 17) #rf
-Grid <- expand.grid(size = 9, decay = 0.5) #nnet
-# Grid <- expand.grid(fL = 3, usekernel = 0.9) #nb
-# Grid <- expand.grid(nlter) #LogitBoost
+# Grid <- expand.grid(size = 6, decay = 0.5) #nnet
+Grid <- expand.grid(fL = 1, usekernel = T) #nb
+# Grid <- expand.grid(nIter = 100) #LogitBoost
 # train
 set.seed(8)
 fit <- train(PURCHASE_FLG ~ .,
              data = training[,-c(1,2)],
-             method = "nnet", 
+             method = "nb", 
              trControl = fitControl,
              # preProc = c("pca"), #"center", "scale"
              # tuneLength = 6, #8
@@ -67,4 +67,5 @@ pred <- predict(fit, newdata = validation, type = "prob")
 
 # save model
 gbmFit <- fit
-save(gbmFit, file='../trained_models.RData')
+nnetFit <- fit
+save(nnetFit, file='../trained_models_nnet.RData')
