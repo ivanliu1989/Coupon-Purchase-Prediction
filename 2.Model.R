@@ -21,17 +21,17 @@ training$PURCHASE_FLG <- as.factor(training$PURCHASE_FLG)
 levels(training$PURCHASE_FLG) <- c('No','Yes')
 
 # model settings
-fitControl <- trainControl(method = "none", # adaptive_cv
+fitControl <- trainControl(method = "adaptive_cv", # adaptive_cv
                            number = 10, #10
                            #                            repeats = 1, #5
                            classProbs = TRUE,
                            summaryFunction = twoClassSummary,
                            # allowParallel = TRUE,
-                           selectionFunction = 'best'#,
-                           #                            adaptive = list(min = 4, #10
-                           #                                            alpha = 0.05,
-                           #                                            method = "BT",
-                           #                                            complete = TRUE)
+                           selectionFunction = 'best',
+                                                      adaptive = list(min = 6, #10
+                                                                      alpha = 0.05,
+                                                                      method = "BT",
+                                                                      complete = TRUE)
 )
 # grid
 # Grid <-  expand.grid(interaction.depth = 6,
@@ -42,7 +42,7 @@ fitControl <- trainControl(method = "none", # adaptive_cv
 # Grid <- expand.grid(mtry = 13) #rf
 # Grid <- expand.grid(size = 6, decay = 0.5) #nnet
 # Grid <- expand.grid(fL = 1, usekernel = T) #nb
-Grid <- expand.grid(nIter = 100) #LogitBoost
+Grid <- expand.grid(nIter = 60) #LogitBoost
 # train
 set.seed(8)
 fit <- train(PURCHASE_FLG ~ .,
@@ -50,9 +50,9 @@ fit <- train(PURCHASE_FLG ~ .,
              method = "LogitBoost", 
              trControl = fitControl,
              # preProc = c("pca"), #"center", "scale"
-             # tuneLength = 6, #8
+             tuneLength = 6, #8
              verbose = TRUE,
-             tuneGrid = Grid,
+             # tuneGrid = Grid,
              metric = "ROC")
 
 # feature importance
@@ -67,5 +67,6 @@ pred <- predict(fit, newdata = validation, type = "prob")
 
 # save model
 gbmFit <- fit
+glmFit <- fit
 nnetFit <- fit
-save(nnetFit, file='../trained_models_nnet.RData')
+save(glmFit, file='../trained_models_glm.RData')
