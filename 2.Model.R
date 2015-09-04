@@ -42,12 +42,12 @@ fitControl <- trainControl(method = "adaptive_cv", # adaptive_cv
 # Grid <- expand.grid(mtry = 13) #rf
 # Grid <- expand.grid(size = 6, decay = 0.5) #nnet
 # Grid <- expand.grid(fL = 1, usekernel = T) #nb
-Grid <- expand.grid(nIter = 60) #LogitBoost
+# Grid <- expand.grid(nIter = 60) #LogitBoost
 # train
 set.seed(8)
 fit <- train(PURCHASE_FLG ~ .,
              data = training[,-c(1,2)],
-             method = "LogitBoost", 
+             method = "rf", 
              trControl = fitControl,
              # preProc = c("pca"), #"center", "scale"
              tuneLength = 6, #8
